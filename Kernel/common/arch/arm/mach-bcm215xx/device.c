@@ -550,7 +550,9 @@ struct platform_device bcm215xx_lcdc_device = {
 #endif
 
 #define BCM_CORECLK_TURBO	BCM21553_CORECLK_KHZ_832
+#define BCM_CORE_CLK_BOOST      BCM21553_CORECLK_KHZ_624
 #define BCM_CORE_CLK_NORMAL	BCM21553_CORECLK_KHZ_312
+#define BCM_CORE_CLK_SLOW       BCM21553_CORECLK_KHZ_156
 
 #if defined(CONFIG_BCM_CPU_FREQ)
 /*********************************************************************
@@ -559,14 +561,18 @@ struct platform_device bcm215xx_lcdc_device = {
 
 /* Indices for the voltage to frequency mapping table */
 enum {
+        BCM_SLOW_MODE,
 	BCM_NORMAL_MODE,
+        BCM_BOOST_MODE,
 	BCM_TURBO_MODE,
 };
 
 /* Voltage-Frequency mapping for BCM21553 CPU0 */
 static struct bcm_freq_tbl bcm215xx_cpu0_freq_tbl[] = {
-	FTBL_INIT(BCM_CORE_CLK_NORMAL / 1000, 1200000),
-	FTBL_INIT(BCM_CORECLK_TURBO / 1000, 1360000),
+	FTBL_INIT(BCM_CORE_CLK_SLOW / 1000, 1180000),
+	FTBL_INIT(BCM_CORE_CLK_NORMAL / 1000, 1220000),
+	FTBL_INIT(BCM_CORE_CLK_BOOST / 1000, 1280000),
+	FTBL_INIT(BCM_CORECLK_TURBO / 1000, 1340000),
 };
 /* BCM21553 CPU info */
 static struct bcm_cpu_info bcm215xx_cpu_info[] = {
@@ -602,7 +608,9 @@ struct platform_device bcm21553_cpufreq_drv = {
 
 static struct bcm21553_cpufreq_gov_plat bcm21553_cpufreq_gov_plat = {
 	.freq_turbo = BCM_CORECLK_TURBO,
+        .freq_boost = BCM_CORE_CLK_BOOST,
 	.freq_normal = BCM_CORE_CLK_NORMAL,
+        .freq_slow = BCM_CORE_CLK_SLOW,
 };
 
 struct platform_device bcm21553_cpufreq_gov = {
